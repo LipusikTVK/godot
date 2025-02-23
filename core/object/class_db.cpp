@@ -1889,7 +1889,7 @@ void ClassDB::_bind_method_custom(const StringName &p_class, MethodBind *p_metho
 	type->method_order.push_back(method_name);
 #endif
 
-	type->method_map[method_name] = p_method;
+	type->method_map.insert_new(p_method->get_name(), p_method);
 }
 
 MethodBind *ClassDB::_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args, bool p_compatibility) {
@@ -1915,7 +1915,7 @@ MethodBind *ClassDB::_bind_vararg_method(MethodBind *p_bind, const StringName &p
 		// Overloading not supported
 		ERR_FAIL_V_MSG(nullptr, vformat("Method already bound: '%s::%s'.", instance_type, p_name));
 	}
-	type->method_map[p_name] = bind;
+	type->method_map.insert_new(p_name, bind);
 #ifdef DEBUG_METHODS_ENABLED
 	// FIXME: <reduz> set_return_type is no longer in MethodBind, so I guess it should be moved to vararg method bind
 	//bind->set_return_type("Variant");
@@ -1978,7 +1978,7 @@ MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_
 	if (p_compatibility) {
 		_bind_compatibility(type, p_bind);
 	} else {
-		type->method_map[mdname] = p_bind;
+		type->method_map.insert_new(mdname, p_bind);
 	}
 
 	Vector<Variant> defvals;

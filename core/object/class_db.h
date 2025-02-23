@@ -38,6 +38,7 @@
 // Makes callable_mp readily available in all classes connecting signals.
 // Needs to come after method_bind and object have been included.
 #include "core/object/callable_method_pointer.h"
+#include "core/templates/a_hash_map.h"
 #include "core/templates/hash_set.h"
 
 #include <type_traits>
@@ -99,15 +100,15 @@ public:
 	};
 
 	struct ClassInfo {
-		APIType api = API_NONE;
 		ClassInfo *inherits_ptr = nullptr;
-		void *class_ptr = nullptr;
+		AHashMap<StringName, MethodBind *> method_map;
+		AHashMap<StringName, PropertySetGet> property_setget;
 
+		void *class_ptr = nullptr;
 		ObjectGDExtension *gdextension = nullptr;
 
-		HashMap<StringName, MethodBind *> method_map;
 		HashMap<StringName, LocalVector<MethodBind *>> method_map_compatibility;
-		HashMap<StringName, int64_t> constant_map;
+		AHashMap<StringName, int64_t> constant_map;
 		struct EnumInfo {
 			List<StringName> constants;
 			bool is_bitfield = false;
@@ -116,7 +117,7 @@ public:
 		HashMap<StringName, EnumInfo> enum_map;
 		HashMap<StringName, MethodInfo> signal_map;
 		List<PropertyInfo> property_list;
-		HashMap<StringName, PropertyInfo> property_map;
+		AHashMap<StringName, PropertyInfo> property_map;
 #ifdef DEBUG_METHODS_ENABLED
 		List<StringName> constant_order;
 		List<StringName> method_order;
@@ -131,6 +132,7 @@ public:
 
 		StringName inherits;
 		StringName name;
+		APIType api = API_NONE;
 		bool disabled = false;
 		bool exposed = false;
 		bool reloadable = false;
